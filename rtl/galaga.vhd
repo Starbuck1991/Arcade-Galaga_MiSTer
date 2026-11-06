@@ -106,6 +106,7 @@ entity galaga is
 port(
 	clock_18       : in std_logic;
 	reset          : in std_logic;
+	cabinet_lamps  : out std_logic_vector(1 downto 0);
 	video_r        : out std_logic_vector(2 downto 0);
 	video_g        : out std_logic_vector(2 downto 0);
 	video_b        : out std_logic_vector(1 downto 0);
@@ -234,6 +235,7 @@ architecture struct of galaga is
  signal cs51xx_rom_addr   : std_logic_vector(10 downto 0);
  signal cs51xx_rom_do     : std_logic_vector( 7 downto 0);
  signal cs51xx_irq_n      : std_logic := '1';
+ signal cs51xx_p_port_out : std_logic_vector(3 downto 0);
  signal cs51xx_ol_port_out: std_logic_vector( 3 downto 0);
  signal cs51xx_oh_port_out: std_logic_vector( 3 downto 0);
  signal cs51xx_k_port_in  : std_logic_vector( 3 downto 0);
@@ -901,6 +903,9 @@ begin
  end if;
 end process;
 
+-- Lámparas originales: jugador 1 = P1; jugador 2 = P0.
+cabinet_lamps <= "00" when reset = '1' else cs51xx_p_port_out(0) & cs51xx_p_port_out(1);
+
 cs51XX_do <= cs51xx_oh_port_out & cs51xx_ol_port_out;
 
 cs54XX_do <= X"FF"; -- no data from CS54XX
@@ -1074,7 +1079,7 @@ port map(
  k_port_in   => cs5Xxx_rw & cs51xx_k_port_in(2 downto 0), -- pin 38,39,40,41
  ol_port_out => cs51xx_ol_port_out, -- pin 13,14,15,16
  oh_port_out => cs51xx_oh_port_out, -- pin 17,18,19,20
- p_port_out  => open, -- pin 9,10,11,12
+ p_port_out  => cs51xx_p_port_out, -- pin 9,10,11,12
 
  stby_n    => '0',
  tc_n      => not vblank, -- pin 8

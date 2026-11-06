@@ -265,6 +265,7 @@ wire [15:0] joystick_0, joystick_1;
 wire [15:0] joy = joystick_0 | joystick_1;
 
 wire [21:0] gamma_bus;
+wire [1:0] cabinet_lamps;
 
 hps_io #(.CONF_STR(CONF_STR)) hps_io
 (
@@ -276,6 +277,8 @@ hps_io #(.CONF_STR(CONF_STR)) hps_io
 	.status_menumask(status_menumask),
 	.forced_scandoubler(forced_scandoubler),
 	.gamma_bus(gamma_bus),
+	.ps2_kbd_led_use(3'b011),
+	.ps2_kbd_led_status({1'b0, cabinet_lamps[0], cabinet_lamps[1]}),
 	.direct_video(direct_video),
 	.video_rotated(video_rotated),
 
@@ -368,6 +371,7 @@ galaga galaga
 (
 	.clock_18(clk_sys),
 	.reset(reset),
+	.cabinet_lamps(cabinet_lamps),
 
 	.dn_addr(ioctl_addr[16:0]),
 	.dn_data(ioctl_dout),
